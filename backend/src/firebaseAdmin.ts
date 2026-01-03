@@ -1,16 +1,39 @@
 import admin from 'firebase-admin';
 import path from 'path';
+import dotenv from 'dotenv';
 
-// Load the Master Key
-// We use path.resolve to find the key wherever the server runs (Local or Render)
-const serviceAccount = path.resolve(__dirname, '../serviceAccountKey.json');
+dotenv.config();
 
-// Check if already initialized (to prevent errors during hot-reloads)
+// Check if we are already initialized
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+  try {
+    // SCENARIO 1: CLOUD (Render) ☁️
+    // If the secret variable exists, use it!
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+      console.log("☁️ Loading Firebase Credential from Environment Variable...");
+      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+      
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+      
+    } 
+    // SCENARIO 2: LOCAL (Your Laptop) 💻
+    // Otherwise, look for the file
+    else {
+      console.log("💻 Loading Firebase Credential from Local File...");
+      const serviceAccountPath = path.resolve(__dirname, '../serviceAccountKey.json');
+      
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountPath)
+      });
+    }
+    
+    console.log("🔥 Firebase Admin Initialized Successfully!");
+
+  } catch (error) {
+    console.error("❌ Firebase Auth Error:", error);
+  }
 }
 
 export const db = admin.firestore();
-console.log("🔥 Firebase Admin Initialized Successfully!");
