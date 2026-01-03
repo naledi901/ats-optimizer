@@ -4,7 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { db } from './firebaseAdmin'; // <--- NEW: Import the Database Connection
+import { db } from './firebaseAdmin'; 
 
 dotenv.config();
 
@@ -53,7 +53,7 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
     // If user is new, create them
     if (!userDoc.exists) {
       await userRef.set({ 
-        email: 'user@email.com', // Placeholder (Frontend can send real email later)
+        email: 'user@email.com', 
         aiUsageCount: 0, 
         isPremium: false 
       });
@@ -71,7 +71,7 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
       });
     }
 
-    // 4. PERFORM AI GENERATION (Only if allowed)
+    // 4. PERFORM AI GENERATION
     const truthConstraints = `
       CRITICAL RULES:
       1. NO HALLUCINATIONS. Do not add skills/experience the user didn't mention.
@@ -149,7 +149,7 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-//  ROUTE 2: PDF GENERATION (Unchanged)
+//  ROUTE 2: PDF GENERATION
 // ==========================================
 const generateHTML = (data: CVData, templateId: string): string => {
   const { 
@@ -313,7 +313,6 @@ app.post('/generate-pdf', async (req: Request, res: Response) => {
     const browser = await puppeteer.launch({ 
       headless: true, 
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      // We don't need executablePath anymore, the config file handles it!
     });
 
     const page = await browser.newPage();
@@ -337,6 +336,34 @@ app.post('/generate-pdf', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('PDF Generation Error:', error);
     res.status(500).json({ error: 'Failed to generate PDF' });
+  }
+});
+
+// ==========================================
+//  ROUTE 3: UPGRADE USER TO PREMIUM 💎  <--- NEW!
+// ==========================================
+app.post('/upgrade-user', async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID required' });
+    }
+
+    // Update the user document to Premium
+    // We also set aiUsageCount to 0 so they get a fresh start (optional but nice)
+    await db.collection('users').doc(userId).update({
+      isPremium: true,
+      aiUsageCount: 0,
+      premiumSince: new Date().toISOString() 
+    });
+
+    console.log(`💎 User ${userId} upgraded to Premium!`);
+    res.json({ success: true, message: 'User upgraded successfully' });
+
+  } catch (error) {
+    console.error('Upgrade Error:', error);
+    res.status(500).json({ error: 'Failed to upgrade user' });
   }
 });
 
