@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { db } from './firebaseAdmin'; // <--- NEW: Import the Database Connection
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 5000; // Updated to use Render's port if available
+const PORT = process.env.PORT || 5000;
 const API_KEY = process.env.GEMINI_API_KEY;
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 
@@ -21,8 +22,8 @@ interface CVData {
   summary: string;
   experience: Array<{ role: string; company: string; duration: string; description: string }>;
   education: Array<{ school: string; degree: string; dates: string }>;
-  skills: string[] | string;       // Technical Skills
-  softSkills?: string[] | string;  // <--- NEW: Soft Skills
+  skills: string[] | string;
+  softSkills?: string[] | string;
   projects: Array<{ name: string; description: string; link: string }>;
   certifications: Array<{ name: string; issuer: string; date: string }>;
   activities: Array<{ role: string; organization: string; description: string }>;
@@ -31,26 +32,56 @@ interface CVData {
 }
 
 // ==========================================
-//  ROUTE 1: TRUTHFUL AI OPTIMIZER
+//  ROUTE 1: TRUTHFUL AI OPTIMIZER (With Usage Limit)
 // ==========================================
 app.post('/enhance-text', async (req: Request, res: Response) => {
   try {
-    const { text, section, context, jobDescription } = req.body;
+    // 1. GET USER ID FROM FRONTEND
+    const { text, section, context, jobDescription, userId } = req.body; 
+    
+    // Guardrail: Must be logged in
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
     if (!genAI) return res.status(500).json({ error: 'Server missing Gemini API Key' });
 
-    // 1. TRUTH GUARDRAIL
+    // 2. CHECK DATABASE (The Bouncer) 👮‍♂️
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+
+    // If user is new, create them
+    if (!userDoc.exists) {
+      await userRef.set({ 
+        email: 'user@email.com', // Placeholder (Frontend can send real email later)
+        aiUsageCount: 0, 
+        isPremium: false 
+      });
+    }
+
+    const userData = userDoc.exists ? userDoc.data() : { aiUsageCount: 0, isPremium: false };
+
+    // 3. THE LIMIT CHECK
+    // Block if NOT premium AND count is 10 or more
+    if (!userData?.isPremium && (userData?.aiUsageCount || 0) >= 10) {
+      console.log(`🚫 User ${userId} blocked. Usage: ${userData?.aiUsageCount}`);
+      return res.status(403).json({ 
+        error: 'LIMIT_REACHED', 
+        message: 'You have used your 10 free AI credits. Please upgrade to continue.' 
+      });
+    }
+
+    // 4. PERFORM AI GENERATION (Only if allowed)
     const truthConstraints = `
       CRITICAL RULES:
       1. NO HALLUCINATIONS. Do not add skills/experience the user didn't mention.
       2. FACTUAL INTEGRITY. Polish existing content only.
     `;
 
-    // 2. ATS STRATEGY
     const atsStrategy = jobDescription 
       ? `ATS STRATEGY: Prioritize skills found in this Job Description: "${jobDescription}".` 
       : `Focus on professional clarity.`;
 
-    // 3. SECTION SPECIFIC RULES
     let specificRules = "";
     switch(section) {
       case 'experience':
@@ -103,6 +134,12 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const result = await model.generateContent(fullPrompt);
+    
+    // 5. UPDATE THE COUNTER (Success!) 📈
+    await userRef.update({
+      aiUsageCount: (userData?.aiUsageCount || 0) + 1
+    });
+
     res.json({ enhancedText: result.response.text().trim().replace(/^"|"$/g, '') });
 
   } catch (error) {
@@ -112,12 +149,12 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-//  ROUTE 2: PDF GENERATION (Updated for Soft Skills & Graduate Logic)
+//  ROUTE 2: PDF GENERATION (Unchanged)
 // ==========================================
 const generateHTML = (data: CVData, templateId: string): string => {
   const { 
     personalInfo, summary, experience = [], education = [], 
-    skills = [], softSkills = [], // <--- Destructure Soft Skills
+    skills = [], softSkills = [],
     projects = [], activities = [], certifications = [] 
   } = data;
   
@@ -125,7 +162,6 @@ const generateHTML = (data: CVData, templateId: string): string => {
   let font = 'Helvetica, Arial, sans-serif';
   let headingStyle = 'text-transform: uppercase; font-weight: bold; border-bottom: 1px solid #ddd;';
   
-  // --- TEMPLATE STYLES ---
   switch(templateId) {
     case 'graduate':
       colors = { primary: '#1e293b', secondary: '#475569', accent: '#2563eb' };
@@ -146,7 +182,6 @@ const generateHTML = (data: CVData, templateId: string): string => {
 
   const cleanText = (text: string) => text.replace(/\*\*/g, '').replace(/\*/g, '');
   
-  // --- HELPER 1: FORMAT TECHNICAL SKILLS (Bold Categories) ---
   let rawSkills = Array.isArray(skills) ? skills.join('\n') : skills;
   const formattedSkills = cleanText(rawSkills)
     .split('\n')
@@ -159,10 +194,8 @@ const generateHTML = (data: CVData, templateId: string): string => {
     })
     .join('<br/>');
 
-  // --- HELPER 2: FORMAT SOFT SKILLS (Simple List) ---
   let rawSoftSkills = Array.isArray(softSkills) ? softSkills.join(', ') : softSkills;
 
-  // --- HELPER 3: SECTION RENDERERS ---
   const renderExperience = () => experience.length > 0 ? `
       <h3>Experience</h3>
       ${experience.map(job => `
@@ -193,7 +226,6 @@ const generateHTML = (data: CVData, templateId: string): string => {
 
   const renderSkills = () => formattedSkills ? `<h3>Technical Skills</h3><div class="skills-block">${formattedSkills}</div>` : '';
   
-  // <--- NEW: SOFT SKILLS RENDERER
   const renderSoftSkills = () => rawSoftSkills ? `
       <h3>Soft Skills</h3>
       <div class="skills-block">${cleanText(rawSoftSkills)}</div>
@@ -216,11 +248,9 @@ const generateHTML = (data: CVData, templateId: string): string => {
         </div>`).join('')}
   ` : '';
 
-  // --- DYNAMIC ORDERING LOGIC ---
   let contentBody = '';
   
   if (templateId === 'graduate') {
-    // GRADUATE ORDER: Education -> Tech Skills -> Soft Skills -> Projects -> Experience
     contentBody = `
       ${renderEducation()}
       ${renderSkills()}
@@ -231,7 +261,6 @@ const generateHTML = (data: CVData, templateId: string): string => {
       ${renderActivities()}
     `;
   } else {
-    // STANDARD ORDER: Tech Skills -> Soft Skills -> Experience -> Education -> Projects
     contentBody = `
       ${renderSkills()}
       ${renderSoftSkills()}
@@ -268,28 +297,23 @@ const generateHTML = (data: CVData, templateId: string): string => {
             ${personalInfo.email}
           </div>
         </div>
-
         ${summary ? `<h3>Professional Summary</h3><p>${summary}</p>` : ''}
-        
         ${contentBody}
-
       </body>
     </html>
   `;
 };
 
-// === FIX 1: ROUTE MATCHING (Removed /api to match frontend) ===
 app.post('/generate-pdf', async (req: Request, res: Response) => {
   try {
     const cvData: CVData = req.body;
     const templateId = cvData.templateId || 'modern';
     
-    // === FIX 2: PUPPETEER CONFIG FOR RENDER ===
-    // We must tell Puppeteer to use Render's Chrome, otherwise it crashes!
+    // ".puppeteerrc.cjs" handles the cache directory now!
     const browser = await puppeteer.launch({ 
       headless: true, 
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined 
+      // We don't need executablePath anymore, the config file handles it!
     });
 
     const page = await browser.newPage();
