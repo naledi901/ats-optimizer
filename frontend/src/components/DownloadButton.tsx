@@ -1,30 +1,23 @@
-
 import React, { useState } from 'react';
 import { useCV } from '../context/CVContext';
-import { useAuth } from '../context/AuthContext'; // <--- 1. Import Auth
+import { useAuth } from '../context/AuthContext';
 
 const DownloadButton = () => {
   const { cvData } = useCV();
-  const { currentUser, login } = useAuth(); // <--- 2. Get User details
+  const { currentUser, login } = useAuth();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
-    // --- 3. THE GUARDRAIL (The Bouncer) ---
+    // --- 1. AUTH CHECK (Direct Login - No "Confirm" dialog) ---
     if (!currentUser) {
-      const confirmLogin = window.confirm(
-        "🔒 Premium Feature\n\nPlease sign in to download your PDF.\nClick OK to sign in with Google."
-      );
-      if (confirmLogin) {
-        login();
-      }
-      return; // Stop the function here!
+       login(); // Call login directly to avoid popup blockers
+       return; 
     }
-    // ---------------------------------------
+    // ----------------------------------------------------------
 
     setIsDownloading(true);
     try {
-      // We will ensure the backend matches this URL later
-      const response = await fetch('http://localhost:5000/api/generate-pdf', {
+      const response = await fetch('https://ats-optimizer-zjdl.onrender.com/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cvData),
@@ -36,7 +29,7 @@ const DownloadButton = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      // Sanitize filename to avoid weird characters
+      // Sanitize filename
       a.download = `CV_${cvData.personalInfo.fullName.replace(/\s+/g, '_') || 'Draft'}.pdf`;
       document.body.appendChild(a);
       a.click();
@@ -45,7 +38,7 @@ const DownloadButton = () => {
       
     } catch (error) {
       console.error('Download Error:', error);
-      alert('Failed to connect to the PDF server. (We will build this next!)');
+      alert('PDF Generation Failed. Please try again.');
     } finally {
       setIsDownloading(false);
     }

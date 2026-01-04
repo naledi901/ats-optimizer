@@ -32,7 +32,7 @@ interface CVData {
 }
 
 // ==========================================
-//  ROUTE 1: TRUTHFUL AI OPTIMIZER (With Usage Limit)
+//  ROUTE 1: TRUTHFUL AI OPTIMIZER (With Usage Limit & Expiration Check)
 // ==========================================
 app.post('/enhance-text', async (req: Request, res: Response) => {
   try {
@@ -61,13 +61,31 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 
     const userData = userDoc.exists ? userDoc.data() : { aiUsageCount: 0, isPremium: false };
 
+    // --- NEW: EXPIRATION CHECK ⏳ ---
+    let hasActivePremium = false;
+    
+    // Only check expiration if they are marked as premium
+    if (userData?.isPremium && userData?.premiumExpiresAt) {
+      const expiryDate = new Date(userData.premiumExpiresAt);
+      const now = new Date();
+      
+      if (now < expiryDate) {
+        hasActivePremium = true; // Still valid!
+      } else {
+        console.log(`⚠️ User ${userId} premium expired on ${expiryDate}`);
+        // We treat them as free user (hasActivePremium remains false)
+      }
+    }
+    // -------------------------------
+
     // 3. THE LIMIT CHECK
-    // Block if NOT premium AND count is 10 or more
-    if (!userData?.isPremium && (userData?.aiUsageCount || 0) >= 10) {
+    // Block if: (NOT Active Premium) AND (Count >= 10)
+    // Note: If their premium expired, hasActivePremium is false, so this check runs.
+    if (!hasActivePremium && (userData?.aiUsageCount || 0) >= 10) {
       console.log(`🚫 User ${userId} blocked. Usage: ${userData?.aiUsageCount}`);
       return res.status(403).json({ 
         error: 'LIMIT_REACHED', 
-        message: 'You have used your 10 free AI credits. Please upgrade to continue.' 
+        message: 'Your 30-Day Pass has expired (or you reached the free limit). Please renew to continue.' 
       });
     }
 
@@ -149,7 +167,7 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-//  ROUTE 2: PDF GENERATION
+//  ROUTE 2: PDF GENERATION (Unchanged)
 // ==========================================
 const generateHTML = (data: CVData, templateId: string): string => {
   const { 
@@ -340,7 +358,7 @@ app.post('/generate-pdf', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-//  ROUTE 3: UPGRADE USER TO PREMIUM 💎  <--- NEW!
+//  ROUTE 3: UPGRADE USER (30-DAY PASS) 🗓️
 // ==========================================
 app.post('/upgrade-user', async (req: Request, res: Response) => {
   try {
@@ -350,16 +368,21 @@ app.post('/upgrade-user', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'User ID required' });
     }
 
-    // Update the user document to Premium
-    // We also set aiUsageCount to 0 so they get a fresh start (optional but nice)
+    // 1. CALCULATE EXPIRATION DATE (Now + 30 Days)
+    const now = new Date();
+    const thirtyDaysLater = new Date(now);
+    thirtyDaysLater.setDate(now.getDate() + 30); // <--- Add 30 Days
+
+    // 2. UPDATE DATABASE
     await db.collection('users').doc(userId).update({
       isPremium: true,
-      aiUsageCount: 0,
-      premiumSince: new Date().toISOString() 
+      aiUsageCount: 0, // Reset count
+      premiumSince: now.toISOString(),
+      premiumExpiresAt: thirtyDaysLater.toISOString() // <--- Save Expiry!
     });
 
-    console.log(`💎 User ${userId} upgraded to Premium!`);
-    res.json({ success: true, message: 'User upgraded successfully' });
+    console.log(`💎 User ${userId} upgraded until ${thirtyDaysLater.toISOString()}`);
+    res.json({ success: true, message: 'User upgraded for 30 days' });
 
   } catch (error) {
     console.error('Upgrade Error:', error);

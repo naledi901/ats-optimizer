@@ -12,8 +12,6 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import type { CVContent } from '../types'; 
 import { initialCV } from '../data/initialCV';
 
-// ... (Keep the rest of the file exactly the same)
-
 // Define the Context Shape
 interface CVContextType {
   cvData: CVContent;
@@ -39,6 +37,7 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
         
         if (docSnap.exists()) {
           // Merge saved data with initial structure (in case we added new fields)
+          // We use 'as CVContent' to safely cast the data
           setCVData({ ...initialCV, ...docSnap.data() } as CVContent);
         }
       }
@@ -46,7 +45,7 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
     loadUserData();
   }, [currentUser]);
 
-  // 2. AUTO-SAVE when Data Changes (Debounced 1s)
+  // 2. AUTO-SAVE when Data Changes (Debounced 2s)
   useEffect(() => {
     if (!currentUser) return;
 
@@ -54,8 +53,13 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
       setIsSaving(true);
       try {
         const docRef = doc(db, "users", currentUser.uid);
-        // Save the entire cvData object
-        await setDoc(docRef, cvData, { merge: true });
+        
+        // --- THE FIX IS HERE 🛠️ ---
+        // We separate the data. We keep the 'cv fields' but remove the 'backend fields'.
+        // This ensures the frontend never overwrites the usage count!
+        const { aiUsageCount, isPremium, ...dataToSave } = cvData as any; 
+
+        await setDoc(docRef, dataToSave, { merge: true });
       } catch (error) {
         console.error("Error saving data:", error);
       } finally {
