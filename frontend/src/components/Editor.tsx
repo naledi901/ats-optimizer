@@ -57,37 +57,37 @@ const Editor = () => {
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">📝 Professional Summary</h2>
+                <h2 className="text-xl font-bold mb-4">📝 PROFESSIONAL SUMMARY</h2>
                 <SummaryForm />
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">💼 Experience</h2>
+                <h2 className="text-xl font-bold mb-4">💼 WORK EXPERIENCE</h2>
                 <ExperienceForm />
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">🎓 Education</h2>
+                <h2 className="text-xl font-bold mb-4">🎓 EDUCATION</h2>
                 <EducationForm />
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">🛠️ Skills</h2>
+                <h2 className="text-xl font-bold mb-4">🛠️ SKILLS</h2>
                 <SkillsForm />
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">🚀 Projects</h2>
+                <h2 className="text-xl font-bold mb-4">🚀 SELECTED PROJECTS</h2>
                 <ProjectsForm />
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">🏆 Certifications</h2>
+                <h2 className="text-xl font-bold mb-4">🏆 CERTIFICATIONS</h2>
                 <CertificationsForm />
               </div>
 
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-xl font-bold mb-4">🤝 Activities</h2>
+                <h2 className="text-xl font-bold mb-4">🤝 EXRACURRICULAR ACTIVITIES AND LEADERSHIP</h2>
                 <ActivitiesForm />
               </div>
             </div>

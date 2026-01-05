@@ -216,7 +216,7 @@ const generateHTML = (data: CVData, templateId: string): string => {
   let rawSoftSkills = Array.isArray(softSkills) ? softSkills.join(', ') : softSkills;
 
   const renderExperience = () => experience.length > 0 ? `
-      <h3>Experience</h3>
+      <h3>WORK EXPERIENCE</h3>
       ${experience.map(job => `
         <div class="item">
           <div class="item-header"><span>${job.role}</span><span class="date">${job.duration}</span></div>
@@ -227,7 +227,7 @@ const generateHTML = (data: CVData, templateId: string): string => {
 
   // UPDATED: Education now renders the description (Coursework)
   const renderEducation = () => education.length > 0 ? `
-      <h3>Education</h3>
+      <h3>EDUCATION</h3>
       ${education.map(edu => `
         <div class="item">
           <div class="item-header"><span>${edu.school}</span><span class="date">${edu.dates}</span></div>
@@ -237,7 +237,7 @@ const generateHTML = (data: CVData, templateId: string): string => {
   ` : '';
 
   const renderProjects = () => projects.length > 0 ? `
-      <h3>Projects</h3>
+      <h3>SELECTED PROJECTS</h3>
       ${projects.map(p => `
         <div class="item">
           <div class="item-header"><span>${p.name}</span><span class="date">${p.link}</span></div>
@@ -245,15 +245,15 @@ const generateHTML = (data: CVData, templateId: string): string => {
         </div>`).join('')}
   ` : '';
 
-  const renderSkills = () => formattedSkills ? `<h3>Technical Skills</h3><div class="skills-block">${formattedSkills}</div>` : '';
+  const renderSkills = () => formattedSkills ? `<h3>TECHNICAL SKILLS</h3><div class="skills-block">${formattedSkills}</div>` : '';
   
   const renderSoftSkills = () => rawSoftSkills ? `
-      <h3>Soft Skills</h3>
+      <h3>SOFT SKILLS</h3>
       <div class="skills-block">${cleanText(rawSoftSkills)}</div>
   ` : '';
 
   const renderCerts = () => certifications.length > 0 ? `
-      <h3>Certifications</h3>
+      <h3>CERTIFICATIONS</h3>
       ${certifications.map(c => `
         <div class="item">
           <div class="item-header"><span>${c.name} - ${c.issuer}</span><span class="date">${c.date}</span></div>
@@ -261,7 +261,7 @@ const generateHTML = (data: CVData, templateId: string): string => {
   ` : '';
 
   const renderActivities = () => activities.length > 0 ? `
-      <h3>Activities</h3>
+      <h3>EXTRACURRICULAR ACTIVITIES AND LEADERSHIP</h3>
       ${activities.map(a => `
         <div class="item">
           <div class="item-header"><span>${a.role}</span><span class="date">${a.organization}</span></div>

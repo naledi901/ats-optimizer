@@ -33,7 +33,7 @@ const CVPreview = () => {
   const sectionSummary = summary && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Professional Summary
+        PROFESSIONAL SUMMARY
       </h3>
       <p className={styles.body}>{summary}</p>
     </section>
@@ -42,7 +42,7 @@ const CVPreview = () => {
   const sectionSkills = (Array.isArray(skills) ? skills.length > 0 : skills) && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Technical Skills
+        TECHNICAL SKILLS
       </h3>
       <p className="text-sm text-gray-800">
         {Array.isArray(skills) ? skills.join(' • ') : skills}
@@ -53,7 +53,7 @@ const CVPreview = () => {
   const sectionSoftSkills = (Array.isArray(softSkills) ? softSkills.length > 0 : softSkills) && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Soft Skills
+        SOFT SKILLS
       </h3>
       <p className="text-sm text-gray-800">
         {Array.isArray(softSkills) ? softSkills.join(' • ') : softSkills}
@@ -64,7 +64,7 @@ const CVPreview = () => {
   const sectionExperience = experience.length > 0 && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Experience
+        WORK EXPERIENCE
       </h3>
       {experience.map((job, i) => (
         <div key={i} className="mb-4">
@@ -85,7 +85,7 @@ const CVPreview = () => {
   const sectionEducation = education.length > 0 && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Education
+        EDUCATION
       </h3>
       {education.map((edu, i) => (
         <div key={i} className="mb-3">
@@ -109,7 +109,7 @@ const CVPreview = () => {
   const sectionProjects = projects.length > 0 && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Projects
+        SELECTED PROJECTS
       </h3>
       {projects.map((proj, i) => (
         <div key={i} className="mb-3">
@@ -126,7 +126,7 @@ const CVPreview = () => {
   const sectionActivities = activities.length > 0 && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Leadership & Activities
+        EXTRACURRICULAR ACTIVITIES AND LEADERSHIP
       </h3>
       {activities.map((act, i) => (
         <div key={i} className="mb-3">
@@ -143,7 +143,7 @@ const CVPreview = () => {
   const sectionCertifications = certifications.length > 0 && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
-        Certifications
+        CERTIFICATIONS
       </h3>
       {certifications.map((cert, i) => (
         <div key={i} className="mb-2 flex justify-between text-sm">
