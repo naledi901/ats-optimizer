@@ -62,20 +62,29 @@ export const LandingPage: React.FC<Props> = ({ onStart }) => {
           </div>
         </div>
 
-        {/* Right: Image Placeholder */}
+        {/* Right: Actual App Screenshot (UPDATED) */}
         <div className="flex-1 relative">
-          <div className="bg-gray-100 rounded-2xl p-4 shadow-2xl border border-gray-200 transform rotate-2 hover:rotate-0 transition-all duration-500">
-             <div className="aspect-[3/4] bg-white rounded-lg flex items-center justify-center border border-gray-100">
-                <span className="text-6xl">📄</span>
-             </div>
+          {/* The Floating Card Effect */}
+          <div className="relative z-10 bg-white rounded-xl shadow-2xl border border-gray-200 p-2 transform rotate-2 hover:rotate-0 transition-all duration-500 ease-out">
+            <img 
+              src="/app-preview.png" 
+              alt="ATS Optimizer Dashboard" 
+              className="w-full h-auto rounded-lg shadow-inner border border-gray-100"
+            />
           </div>
+
+          {/* Decorative Elements behind the image */}
+          <div className="absolute top-4 -right-4 w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl -z-10 transform -rotate-2"></div>
+          
           {/* Floating Badge */}
-          <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-gray-100 flex items-center gap-3">
-             <span className="text-2xl">🤖</span>
-             <div>
-                <p className="text-xs text-gray-500 font-bold uppercase">ATS Score</p>
-                <p className="text-xl font-bold text-green-600">98/100</p>
-             </div>
+          <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-gray-100 flex items-center gap-3 animate-bounce-slow z-20">
+            <div className="bg-green-100 p-2 rounded-full">
+              <span className="text-2xl">🚀</span>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">ATS Score</p>
+              <p className="text-xl font-bold text-green-600">98/100</p>
+            </div>
           </div>
         </div>
       </header>
