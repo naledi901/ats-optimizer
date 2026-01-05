@@ -1,18 +1,16 @@
-
 import { useCV } from '../context/CVContext';
 import { templates } from '../templates/templateRegistry';
 
 const CVPreview = () => {
   const { cvData } = useCV();
   
-  // 1. Add softSkills to destructuring
   const { 
     personalInfo = { fullName: '', email: '', phone: '', location: '' }, 
     summary = '', 
     experience = [], 
     education = [], 
     skills = [], 
-    softSkills = [], // <--- NEW
+    softSkills = [], 
     projects = [], 
     certifications = [], 
     activities = [],
@@ -52,7 +50,6 @@ const CVPreview = () => {
     </section>
   );
 
-  // 2. NEW: Soft Skills Section Builder
   const sectionSoftSkills = (Array.isArray(softSkills) ? softSkills.length > 0 : softSkills) && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
@@ -84,18 +81,26 @@ const CVPreview = () => {
     </section>
   );
 
+  // 👇 UPDATED: Now renders the description (Coursework) correctly!
   const sectionEducation = education.length > 0 && (
     <section>
       <h3 className={styles.heading} style={{ color: colors.accent, borderColor: colors.secondary }}>
         Education
       </h3>
       {education.map((edu, i) => (
-        <div key={i} className="mb-2">
+        <div key={i} className="mb-3">
           <div className="flex justify-between items-baseline">
             <h4 className={styles.subHeading}>{edu.school}</h4>
             <span className={styles.meta}>{edu.dates}</span>
           </div>
-          <div className="text-sm">{edu.degree}</div>
+          <div className="text-sm font-semibold mb-1">{edu.degree}</div>
+          
+          {/* This part renders the Coursework if it exists */}
+          {edu.description && (
+            <p className="text-xs text-gray-600 whitespace-pre-line mt-1">
+              {edu.description}
+            </p>
+          )}
         </div>
       ))}
     </section>
@@ -183,23 +188,23 @@ const CVPreview = () => {
 
           {/* --- DYNAMIC LAYOUT ORDERING --- */}
           {templateId === 'graduate' ? (
-            // GRADUATE ORDER: Education -> Tech Skills -> Soft Skills -> Projects -> Experience
+            // GRADUATE ORDER
             <>
               {sectionSummary}
               {sectionEducation}
               {sectionSkills}
-              {sectionSoftSkills} {/* <--- ADDED HERE */}
+              {sectionSoftSkills}
               {sectionProjects}
               {sectionExperience}
               {sectionActivities}
               {sectionCertifications}
             </>
           ) : (
-            // STANDARD ORDER: Tech Skills -> Soft Skills -> Experience -> Education -> Projects
+            // STANDARD ORDER
             <>
               {sectionSummary}
               {sectionSkills}
-              {sectionSoftSkills} {/* <--- ADDED HERE */}
+              {sectionSoftSkills}
               {sectionExperience}
               {sectionEducation}
               {sectionProjects}

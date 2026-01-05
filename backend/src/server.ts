@@ -21,7 +21,8 @@ interface CVData {
   personalInfo: { fullName: string; email: string; phone: string; location: string };
   summary: string;
   experience: Array<{ role: string; company: string; duration: string; description: string }>;
-  education: Array<{ school: string; degree: string; dates: string }>;
+  // UPDATED: Added 'description' (optional) for Coursework
+  education: Array<{ school: string; degree: string; dates: string; description?: string }>;
   skills: string[] | string;
   softSkills?: string[] | string;
   projects: Array<{ name: string; description: string; link: string }>;
@@ -167,7 +168,7 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-//  ROUTE 2: PDF GENERATION (Unchanged Logic, Updated Config)
+//  ROUTE 2: PDF GENERATION
 // ==========================================
 const generateHTML = (data: CVData, templateId: string): string => {
   const { 
@@ -224,12 +225,14 @@ const generateHTML = (data: CVData, templateId: string): string => {
         </div>`).join('')}
   ` : '';
 
+  // UPDATED: Education now renders the description (Coursework)
   const renderEducation = () => education.length > 0 ? `
       <h3>Education</h3>
       ${education.map(edu => `
         <div class="item">
           <div class="item-header"><span>${edu.school}</span><span class="date">${edu.dates}</span></div>
-          <div>${edu.degree}</div>
+          <div style="font-weight: bold; margin-bottom: 2px;">${edu.degree}</div>
+          ${edu.description ? `<p style="margin-top: 4px; font-size: 11px; color: #444;">${cleanText(edu.description)}</p>` : ''}
         </div>`).join('')}
   ` : '';
 

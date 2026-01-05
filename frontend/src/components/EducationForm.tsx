@@ -6,7 +6,7 @@ const EducationForm = () => {
   const addEducation = () => {
     updateCVData('education', [
       ...(cvData.education || []),
-      { school: '', degree: '', dates: '' }
+      { school: '', degree: '', dates: '', description: '' }
     ]);
   };
 
@@ -18,13 +18,16 @@ const EducationForm = () => {
 
   const updateEducation = (index: number, field: string, value: string) => {
     const newEdu = [...(cvData.education || [])];
+    // @ts-ignore
     newEdu[index] = { ...newEdu[index], [field]: value };
     updateCVData('education', newEdu);
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-800">Education</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-gray-800">Education</h2>
+      </div>
 
       {cvData.education?.map((edu, index) => (
         <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
@@ -36,6 +39,7 @@ const EducationForm = () => {
           </div>
 
           <div className="space-y-4">
+            {/* School Name */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Institution Name</label>
               <input
@@ -47,6 +51,7 @@ const EducationForm = () => {
               />
             </div>
 
+            {/* Degree */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Degree / Qualification</label>
               <input
@@ -58,6 +63,7 @@ const EducationForm = () => {
               />
             </div>
 
+            {/* Dates */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Dates Attended</label>
               <input
@@ -68,6 +74,24 @@ const EducationForm = () => {
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
               />
             </div>
+
+            {/* NEW: Description / Coursework Field */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                Description / Relevant Coursework (Optional)
+              </label>
+              <textarea
+                placeholder={`Example:\nRelevant Coursework:\nData Structures & Algorithms, Software Engineering, Database Systems, Web Development, Operating Systems`}
+                value={edu.description || ''}
+                // @ts-ignore
+                onChange={(e) => updateEducation(index, 'description', e.target.value)}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none h-28 text-sm leading-relaxed"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Tip: List your modules here to show technical knowledge.
+              </p>
+            </div>
+
           </div>
         </div>
       ))}

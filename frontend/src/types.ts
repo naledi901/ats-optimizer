@@ -14,13 +14,17 @@ export interface CVContent {
     duration: string;
     description: string;
   }>;
+  
+  // 👇 FIXED: Added description so you can type Coursework
   education: Array<{
     school: string;
     degree: string;
     dates: string;
+    description?: string; 
   }>;
+
   skills: string[] | string;
-  softSkills: string[] | string; 
+  softSkills?: string[] | string; 
   projects: Array<{
     name: string;
     description: string;
@@ -36,7 +40,10 @@ export interface CVContent {
     organization: string;
     description: string;
   }>;
-  // --- ADD THESE TWO LINES ---
   templateId?: string;
   targetJob?: string;
+  
+  // Optional backend fields (keeps TypeScript happy)
+  aiUsageCount?: number;
+  isPremium?: boolean;
 }
