@@ -123,8 +123,8 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
           **RULES FOR SKILLS (COMPACT FORMAT):**
           1. Group skills logically into categories (e.g., Languages, Tools).
           2. **CRITICAL FORMATTING:** Output EXACTLY like this:
-             Category Name: Skill 1, Skill 2, Skill 3
-             Category Name: Skill 1, Skill 2, Skill 3
+              Category Name: Skill 1, Skill 2, Skill 3
+              Category Name: Skill 1, Skill 2, Skill 3
           3. Use a new line for each category.
           4. Do NOT use bullet points.
           5. Capitalize skills correctly (java -> Java).
@@ -167,7 +167,7 @@ app.post('/enhance-text', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-//  ROUTE 2: PDF GENERATION (Unchanged)
+//  ROUTE 2: PDF GENERATION (Unchanged Logic, Updated Config)
 // ==========================================
 const generateHTML = (data: CVData, templateId: string): string => {
   const { 
@@ -327,10 +327,17 @@ app.post('/generate-pdf', async (req: Request, res: Response) => {
     const cvData: CVData = req.body;
     const templateId = cvData.templateId || 'modern';
     
-    // ".puppeteerrc.cjs" handles the cache directory now!
+    // UPDATED CONFIG: Robust Arguments for Render/Cloud
+    // ".puppeteerrc.cjs" handles the cache directory
     const browser = await puppeteer.launch({ 
       headless: true, 
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage', // Critical for preventing crashes on Render
+        '--single-process',        // Critical for low-memory environments
+        '--no-zygote'              // Prevents zombie processes
+      ],
     });
 
     const page = await browser.newPage();
