@@ -61,8 +61,8 @@ Follow these instructions to set up the project locally.
 git clone [https://github.com/your-username/ats-optimizer.git](https://github.com/your-username/ats-optimizer.git)
 cd ats-optimizer
 
-### **2. Setup Backend
-```bash
+2. Setup Backend
+
 cd backend
 npm install
 Create a .env file in the backend folder:
