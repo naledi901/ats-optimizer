@@ -1,141 +1,130 @@
-# 🚀 ATS Optimizer (SA Edition)
+# 🚀 ATS Optimizer (South Africa Edition)
 
-![ATS Score](https://img.shields.io/badge/ATS%20Score-98%2F100-green?style=for-the-badge)
-![Tech Stack](https://img.shields.io/badge/Stack-MERN-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Live%20Beta-orange?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Live_Beta-success?style=for-the-badge)
+![Tech Stack](https://img.shields.io/badge/Stack-MERN_%2B_Firebase-blue?style=for-the-badge)
+![AI Power](https://img.shields.io/badge/AI-Google_Gemini-purple?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-gray?style=for-the-badge)
 
-**The #1 AI-Powered CV Builder for the South African Job Market.**
+> **The #1 AI-Powered CV Builder tailored for the South African Job Market 🇿🇦**
 
-ATS Optimizer is a full-stack SaaS application that helps job seekers build professional, ATS-friendly Curricula Vitae (CVs). It leverages **Google Gemini AI** to rewrite bullet points and **Puppeteer** to generate high-quality, ATS-readable PDFs.
-
-👉 **[Live Demo](https://ats-optimizer-1-nr3c.onrender.com)** 
+ATS Optimizer is a full-stack SaaS application designed to help job seekers beat automated screening bots (ATS). It leverages **Google Gemini AI** to rewrite generic experience into impactful, result-oriented bullet points and uses **Puppeteer** to generate high-fidelity, ATS-compliant PDFs.
 
 ---
 
-## 📸 Screenshots
+## 🔗 Live Demo
 
-### **Professional Dashboard**
-![App Preview](frontend/public/app-preview.png)
+👉 **Launch App:**  
+https://ats-optimizer-1-nr3c.onrender.com
+
+---
+
+## 📸 Application Preview
+
+![Dashboard Preview](frontend/public/app-preview.png)
+
+> *Screenshot reflects the latest beta build.*
 
 ---
 
 ## ✨ Key Features
 
-* **🇿🇦 South African Standard:** Templates designed specifically for SA recruiters (single column, concise, clear hierarchy).
-* **🤖 AI Content Enhancement:** Uses **Google Gemini AI** to rewrite generic experience into impactful, result-oriented bullet points.
-* **📄 High-Fidelity PDF Generation:** Backend-side rendering with **Puppeteer** ensures perfectly formatted, selectable text that passes ATS bots.
-* **🔐 Secure Authentication:** User accounts managed via **Firebase Auth** with persistent data storage in **Firestore**.
-* **💳 Payment Integration:** **Paystack** integration for premium subscription tiers (30-Day Access Pass).
-* **📱 Responsive Design:** Fully mobile-optimized interface using **Tailwind CSS**.
+### 🇿🇦 Built for the South African Market
+- **SA-Standard CV Layouts:** Clean, single-column formats preferred by local recruiters and HR systems.
+- **Graduate-Friendly:** Includes sections for leadership, activities, and projects to support internships and learnerships.
+- **Government-Ready:** Supports plain, compliant layouts suitable for public sector roles.
+
+---
+
+### 🤖 AI-Powered CV Optimization
+- **Smart Rewriting:** Uses **Google Gemini AI** to transform basic inputs into professional, results-driven bullet points.
+- **ATS Keyword Matching:** Analyzes job descriptions and recommends relevant hard skills and keywords.
+- **Section-by-Section Enhancement:** Users can optimize summaries, experience, skills, and projects individually.
+
+---
+
+### 📄 High-Fidelity PDF Generation
+- **Server-Side Rendering:** Uses **Puppeteer (Headless Chrome)** to generate PDFs.
+- **ATS-Compliant Output:** Text-based PDFs (no images or tables) to ensure accurate ATS parsing.
+- **Real-Time Preview:** React-based live preview updates instantly as users type.
+
+---
+
+### 🔐 Security & Payments
+- **Authentication:** Secure login via **Firebase Authentication**.
+- **Data Storage:** CV data stored securely in **Firestore**.
+- **Payments:** **Paystack** integration ready for premium subscriptions (POPIA-aware).
 
 ---
 
 ## 🛠️ Tech Stack
 
-### **Frontend**
-* **React (Vite):** Fast, component-based UI.
-* **TypeScript:** Type safety for robust code.
-* **Tailwind CSS:** Modern, responsive styling.
-* **Firebase SDK:** Authentication and real-time database connection.
+### Frontend
+- **React (Vite)** – Fast, modern UI
+- **TypeScript** – Strict typing for reliability
+- **Tailwind CSS** – Utility-first responsive styling
+- **Context API** – Global CV state management
 
-### **Backend**
-* **Node.js & Express:** REST API server.
-* **Puppeteer:** Headless Chrome for server-side PDF generation.
-* **Google Gemini API:** Generative AI for text optimization.
-* **Firebase Admin SDK:** Secure server-side database operations.
+### Backend
+- **Node.js & Express** – REST API
+- **Puppeteer** – PDF generation
+- **Google Gemini API** – AI text enhancement
+- **Firebase Admin SDK** – Secure server-side operations
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Local Installation Guide
 
-Follow these instructions to set up the project locally.
-
-### **Prerequisites**
-* Node.js (v18 or higher)
-* npm or yarn
-* A Firebase project
-* A Google Gemini API Key
-
-### **1. Clone the Repository**
+### 1️⃣ Clone the Repository
 ```bash
-git clone [https://github.com/your-username/ats-optimizer.git](https://github.com/your-username/ats-optimizer.git)
+git clone https://github.com/naledi901/ats-optimizer.git
 cd ats-optimizer
-
-2. Setup Backend
-
+2️⃣ Backend Setup
+bash
+Copy code
 cd backend
 npm install
-Create a .env file in the backend folder:
 
-Code snippet
-
-PORT=5000
-GEMINI_API_KEY=your_gemini_api_key_here
-FIREBASE_SERVICE_ACCOUNT_KEY=path/to/your/firebase-admin-key.json
-# Or use the raw JSON string if configured that way
-Start the server:
-
-Bash
+# Create a .env file with:
+# PORT=5000
+# GEMINI_API_KEY=your_key
+# FIREBASE_ADMIN_CREDENTIALS=your_credentials
 
 npm run dev
-3. Setup Frontend
-Open a new terminal:
-
-Bash
-
+3️⃣ Frontend Setup
+bash
+Copy code
 cd frontend
 npm install
-Create a .env file in the frontend folder:
 
-Code snippet
-
-VITE_API_URL=http://localhost:5000
-VITE_FIREBASE_API_KEY=your_firebase_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-Start the UI:
-
-Bash
-
+# Create a .env file with your Firebase config
 npm run dev
-📂 Project Structure
-ats-optimizer/
-├── backend/             # Express Server & PDF Logic
-│   ├── src/
-│   │   ├── server.ts    # Main API Entry Point
-│   │   └── firebaseAdmin.ts
-│   └── package.json
-│
-├── frontend/            # React Client
-│   ├── public/          # Static Assets
-│   ├── src/
-│   │   ├── components/  # CV Forms & Preview
-│   │   ├── context/     # Global State (CV Data)
-│   │   ├── pages/       # Landing Page & Dashboard
-│   │   └── types.ts     # TypeScript Definitions
-│   └── package.json
-│
-└── README.md            # You are here!
 🤝 Contributing
-Contributions are welcome!
+Contributions are welcome and appreciated.
 
-Fork the Project
+Fork the project
 
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
+Create your feature branch
 
-Commit your Changes (git commit -m 'Add some AmazingFeature')
+bash
+Copy code
+git checkout -b feature/AmazingFeature
+Commit your changes
 
-Push to the Branch (git push origin feature/AmazingFeature)
+bash
+Copy code
+git commit -m "Add AmazingFeature"
+Push to the branch
 
+bash
+Copy code
+git push origin feature/AmazingFeature
 Open a Pull Request
 
-📝 License
-Distributed under the MIT License.
+👨‍💻 Author
+Naledi Motaung
 
-Author
-Thabo Mokoena (Naledi)
+GitHub: https://github.com/naledi901
 
-GitHub
+Project: https://github.com/naledi901/ats-optimizer
+
+Built with ❤️ for South African job seekers 🇿🇦
