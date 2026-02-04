@@ -7,7 +7,7 @@
 
 > **The #1 AI-Powered CV Builder tailored for the South African Job Market 🇿🇦**
 
-ATS Optimizer is a full-stack SaaS application designed to help job seekers beat automated screening bots (ATS). It leverages **Google Gemini AI** to rewrite generic experience into impactful, result-oriented bullet points and uses **Puppeteer** to generate high-fidelity, ATS-compliant PDFs.
+ATS Optimizer is a full-stack SaaS application designed to help job seekers beat automated screening bots (ATS). It leverages **Google Gemini API** to rewrite generic experience into impactful, result-oriented bullet points and uses **Puppeteer** to generate high-fidelity, ATS-compliant PDFs.
 
 ---
 
