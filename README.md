@@ -2,7 +2,7 @@
 
 ![Status](https://img.shields.io/badge/Status-Live_Beta-success?style=for-the-badge)
 ![Tech Stack](https://img.shields.io/badge/Stack-MERN_%2B_Firebase-blue?style=for-the-badge)
-![AI Power](https://img.shields.io/badge/AI-Google_Gemini-purple?style=for-the-badge)
+![AI Power](https://img.shields.io/badge/API-Google_Gemini-purple?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-gray?style=for-the-badge)
 
 > **The #1 AI-Powered CV Builder tailored for the South African Job Market 🇿🇦**
