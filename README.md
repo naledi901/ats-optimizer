@@ -14,7 +14,7 @@ ATS Optimizer is a full-stack SaaS application designed to help job seekers beat
 ## 🔗 Live Demo
 
 👉 **Launch App:**  
-https://ats-optimizer-1-nr3c.onrender.com
+https://ats-optimizer-gyr8-git-main-naledi-motaungs-projects.vercel.app/
 
 ---
 
